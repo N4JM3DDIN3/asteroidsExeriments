@@ -1,6 +1,3 @@
-
-// this mat4 to use the matrix (we can do it manually)
-// import { mat4 } from "https://cdn.jsdelivr.net/npm/gl-matrix@3.4.3/esm/index.js";
 import { mat4 } from 'https://wgpu-matrix.org/dist/3.x/wgpu-matrix.module.min.js';
 
 import Asteroids from '../3d/asteroid.js';
