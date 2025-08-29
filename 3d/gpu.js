@@ -143,12 +143,12 @@ export default class WebGPU {
         return texture;
     }
 
-    async createCubeTexture(facePaths, format) {
+    async createCubeTexture(facePaths) {
         const bitmaps = await Promise.all(facePaths.map(this.createSquareBitmap));
         const size = bitmaps[0].width;
         const texture = this.device.createTexture({
             size: [size, size, 6],
-            format,
+            format: "rgba8unorm",
             usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT
         });
         for (let i = 0; i < 6; i++) {

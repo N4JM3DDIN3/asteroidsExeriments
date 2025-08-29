@@ -3,13 +3,13 @@ import { cubeVertices } from "./cube.js";
 export default class Background {
     static async fromPaths(gpu, { image, shader, projectionMatrixBuffer }, geometry) {
         // !!problem in the creation of the texture !!
-        const texture = await gpu.createCubeTexture([image, image, image, image, image, image], "rgba8unorm");
+        const texture = await gpu.createCubeTexture([image, image, image, image, image, image]);
         const module = await gpu.createShader(shader);
         return new Background(gpu, { texture, module, projectionMatrixBuffer }, geometry)
         
     }
 
-    constructor(gpu, { texture, module, projectionMatrixBuffer }, geometry) {
+    constructor(gpu, { texture, module, projectionMatrixBuffer }) {
         this.gpu = gpu;
         this.texture = texture;
         this.projectionMatrixBuffer = projectionMatrixBuffer;
