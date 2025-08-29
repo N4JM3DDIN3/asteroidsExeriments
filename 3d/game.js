@@ -43,7 +43,7 @@ export default class AsteroidsGame {
         if (this.backgroundType === "cubique") {
             this.starBackground = await this.gpu.createBackground({
                 image: '3d/images/stars.jpg',
-                shader: '3d/shaders/cubeMap.wgsl',
+                shader: '3d/shaders/backgroundMap.wgsl',
                 projectionMatrixBuffer: this.projectionBuffer,
                 backgroundType: "cubique"
             });

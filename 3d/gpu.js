@@ -54,10 +54,6 @@ export default class WebGPU {
         });
     }
 
-    createIndexBuffer(size) {
-        
-    }
-
     createSampler() {
         return this.device.createSampler({
             magFilter: "linear",

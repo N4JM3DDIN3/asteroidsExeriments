@@ -1,14 +1,10 @@
 import { cubeVertices } from "./cube.js";
 
 export default class Background {
-
-    
-
     static async fromPaths(gpu, { image, shader, projectionMatrixBuffer }, geometry) {
         // !!problem in the creation of the texture !!
         const texture = await gpu.createCubeTexture([image, image, image, image, image, image], "rgba8unorm");
         const module = await gpu.createShader(shader);
-        console.log(geometry.vertices)
         return new Background(gpu, { texture, module, projectionMatrixBuffer }, geometry)
         
     }
@@ -36,9 +32,7 @@ export default class Background {
         return this.gpu.device.queue;
     }
 
-    draw(pass) {
-        console.log(this.geometry.vertices);
-        
+    draw(pass) {        
         pass.setPipeline(this.pipeline);
         pass.setBindGroup(0, this.bindGroup);
         pass.setVertexBuffer(0, this.vertexBuffer);
