@@ -3,7 +3,6 @@ struct VertexOutput {
     @location(0) uv: vec2<f32>,
 };
 
-
 struct Background {
     mvpMatrix: mat4x4<f32>,
 }
@@ -14,7 +13,6 @@ struct Background {
 
 @vertex
 fn vsMain(
-    // will be pasing from java script
         @location(0) position : vec3<f32>,
         @location(1) uv       : vec2<f32>
 ) -> VertexOutput {

@@ -1,35 +1,36 @@
 import { mat4 } from 'https://wgpu-matrix.org/dist/3.x/wgpu-matrix.module.min.js';
-
 import Asteroids from './asteroid.js';
 import Camera from './camera.js';
 import Ship from './ship.js';
 import Controls from "./controls.js";
 
+function _createCanvas() {
+    const canvas = document.createElement('canvas');
+    document.body.append(canvas);
+    document.body.style.display = "grid";
+    document.body.style.margin = "0";
+    document.body.style.minHeight = "100dvh";
+    canvas.style.backgroundColor = "black";
+    canvas.height = document.body.clientHeight;
+    canvas.width = document.body.clientWidth;
+    return canvas;
+}
 
 export default class AsteroidsGame {
-    constructor(gpu) { 
-        this.gpu = gpu;       
-        this.canvas = this._createCanvas();
-        this.ctx = this.gpu.createContext(this.canvas, 'opaque')
-        
+    constructor(gpu, backgroundType = "cubique") { 
+        this.gpu = gpu;
+        this.backgroundType = backgroundType;
+
+        this.canvas = _createCanvas();
+        this.ctx = this.gpu.createContext(this.canvas, 'opaque');
+
         this.camera = new Camera(this.canvas);
         this.ship = new Ship(this.camera);
-        
         this.controls = new Controls();
-        
-        this.frameBuffer = gpu.createUniformBuffer(4);
-        this.projectionMatrixBuffer = gpu.createUniformBuffer(64);        
-        this.resize();
-    }
 
-    _createCanvas() {
-        const canvas = document.createElement('canvas');
-        document.body.append(canvas);
-        document.body.style.display = "grid";
-        document.body.style.margin = "0";
-        document.body.style.minHeight = "100dvh";
-        canvas.style.backgroundColor = "black";
-        return canvas;
+        this.frameBuffer = gpu.createUniformBuffer(4);
+        this.projectionBuffer = gpu.createUniformBuffer(144); 
+        this.mvpBuffer = gpu.createUniformBuffer(64); 
     }
 
     resize() {
@@ -38,24 +39,30 @@ export default class AsteroidsGame {
         this.camera.resize(this.canvas);
     }
 
-    async reset(nAsteroids, noise, geometry) {
-        this.starBackground = await this.gpu.createBackground({
-            image: '3d/images/stars.jpg',
-            shader: '3d/shaders/backgroundMap.wgsl',
-            projectionMatrixBuffer: this.projectionMatrixBuffer,
-            geometry
+    async reset(nAsteroids, noise) {
+        if (this.backgroundType === "cubique") {
+            this.starBackground = await this.gpu.createBackground({
+                image: '3d/images/stars.jpg',
+                shader: '3d/shaders/cubeMap.wgsl',
+                projectionMatrixBuffer: this.projectionBuffer,
+                backgroundType: "cubique"
+            });
+        } else {
+            this.starBackground = await this.gpu.createBackground({
+                image: '3d/images/test.jpg',
+                shader: '3d/shaders/background.wgsl',
+                mvpBuffer: this.mvpBuffer,
+                backgroundType: "spherique"
+            });
+
+        }
+
+        this.asteroids = await Asteroids.withModule(this.gpu, {
+            frameBuffer: this.frameBuffer,
+            projectionBuffer: this.backgroundType === "cubique" ? this.projectionBuffer : this.mvpBuffer,
+            nAsteroids,
+            noise
         });
-
-        this.asteroids = await Asteroids.withModule(
-            this.gpu,
-            {
-                frameBuffer: this.frameBuffer,
-                projectionBuffer: this.projectionMatrixBuffer,
-                nAsteroids,
-                noise
-            }
-        );
-
     }
 
     get projectionMatrix() {
@@ -86,21 +93,17 @@ export default class AsteroidsGame {
         this.ship.update(elapsed);
 
         
-        this.gpu.compute((pass) => {
-            this.asteroids.compute(pass);
-        }, (encoder) => {
-            this.asteroids.copy(encoder);
-        });
-
+        this.gpu.compute(pass => this.asteroids.compute(pass), encoder => this.asteroids.copy(encoder));
     }
 
     draw() {
-        this.updateProjectionMatrixBuffer();
-        this.gpu.render(this.ctx.getCurrentTexture().createView(), (pass) => {
+        const pm = this.projectionMatrix;
+        const buffer = this.backgroundType === "cubique" ? this.projectionBuffer : this.mvpBuffer;
+        this.gpu.writeBuffer(buffer, 0, pm.buffer, pm.byteOffset, 64);
+
+        this.gpu.render(this.ctx.getCurrentTexture().createView(), pass => {
             this.starBackground.draw(pass);
             this.asteroids.draw(pass);
         });
     }
-
 }
-

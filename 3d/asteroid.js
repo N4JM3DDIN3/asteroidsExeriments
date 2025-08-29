@@ -77,8 +77,7 @@ export default class Asteroids {
         // The static vertex data
         this.vertices = sphericalVertices(8, 1);
         this.vertexBuffer = gpu.createVertexBuffer(this.vertices.byteLength);
-        new Float32Array(this.vertexBuffer.getMappedRange()).set(this.vertices);
-        this.vertexBuffer.unmap();
+        this.gpu.device.queue.writeBuffer(this.vertexBuffer, 0, this.vertices);
 
         // setup locations of each asteroid (for compute shader)
         this.locations = Array.from({ length: nAsteroids }, _ => {
@@ -94,7 +93,7 @@ export default class Asteroids {
             let tm = randomMotion(0.1, Math.PI * 0);
             return Array.from(tm); //mat4.transpose(tm));
         }).flat();        
-        this.movementBuffer = gpu.createStorageBuffer(64 * nAsteroids, true);
+        this.movementBuffer = gpu.createCopyBuffer(64 * nAsteroids, true);
         new Float32Array(this.movementBuffer.getMappedRange()).set(this.movements);
         this.movementBuffer.unmap();
 
@@ -110,8 +109,14 @@ export default class Asteroids {
         });
         
         // This holds the calculated asteroid locations to render
+<<<<<<< HEAD
         // It will be populated with data from the compute shader 
         this.renderBuffer = gpu.createStorageBuffer(64 * nAsteroids, false);
+=======
+        this.renderBuffer = gpu.createCopyBuffer(64 * nAsteroids, true);
+        new Float32Array(this.renderBuffer.getMappedRange()).set(this.locations);
+        this.renderBuffer.unmap();
+>>>>>>> 17f84e44dde0cf319b6bb186941afa958210d50c
 
         // The render pipeline        
         this.renderPipeline = gpu.createRenderPipeline(module, "vsMain", module, "fsMain", "back");

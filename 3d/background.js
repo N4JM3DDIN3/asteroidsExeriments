@@ -1,3 +1,5 @@
+import { cubeVertices } from "./cube.js";
+
 export default class Background {
 
     
@@ -14,17 +16,11 @@ export default class Background {
     constructor(gpu, { texture, module, projectionMatrixBuffer }, geometry) {
         this.gpu = gpu;
         this.texture = texture;
-        this.geometry = geometry;
         this.projectionMatrixBuffer = projectionMatrixBuffer;
         this.sampler = gpu.createSampler();
         this.pipeline = gpu.createRenderPipeline(module, "vsMain", module, "fsMain");
-        this.vertexBuffer = gpu.device.createBuffer({
-            size: this.geometry.vertices.byteLength,
-            usage: GPUBufferUsage.VERTEX,
-            mappedAtCreation: true
-        });
-        new Float32Array(this.vertexBuffer.getMappedRange()).set(this.geometry.vertices);        
-        this.vertexBuffer.unmap();
+        this.vertexBuffer = gpu.createVertexBuffer(cubeVertices.byteLength)
+        this.gpu.device.queue.writeBuffer(this.vertexBuffer, 0, cubeVertices);
 
         this.bindGroup = gpu.createBindGroup({
             layout: this.pipeline.getBindGroupLayout(0),
@@ -46,7 +42,7 @@ export default class Background {
         pass.setPipeline(this.pipeline);
         pass.setBindGroup(0, this.bindGroup);
         pass.setVertexBuffer(0, this.vertexBuffer);
-        pass.draw(this.geometry.length , 1, 0, 0); // draw the cube
+        pass.draw(36, 1, 0, 0);
     }
 
 
