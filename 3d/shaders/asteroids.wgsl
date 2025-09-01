@@ -39,5 +39,16 @@ fn cpMain(@builtin(global_invocation_id) id: vec3u) {
     let elapsed = frame.elapsed;
     let previousLocation = location[id.x].transformationMatrix;
     let motion = movement[id.x].transformationMatrix;
-    location[id.x].transformationMatrix = previousLocation * motion;
+
+    // applique le mouvement
+    var newLocation = previousLocation * motion;
+
+    // récupère la translation (colonne 3) pour calculer la distance
+    let pos = newLocation[3].xyz;
+    if (length(pos) > 200.0) {
+        // repositionne l'astéroïde à sa position précédente ou random
+        newLocation = previousLocation; // ou créer une matrice random ici
+    }
+
+    location[id.x].transformationMatrix = newLocation;
 }

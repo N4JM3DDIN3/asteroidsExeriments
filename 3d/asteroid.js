@@ -16,14 +16,24 @@ function randomlyOrientedDistantObject(distance) {
 
 function randomMotion(translation, rotation) { 
     let tm = mat4.identity();
-    tm = mat4.translate(tm, Array.from({ length: 3 }, _ => (Math.random() - 0.5) * translation));
-    // let tm = mat4.translation();
+    // désactive ou réduit fortement la translation
+    // tm = mat4.translate(tm, [(Math.random() - 0.5) * translation, 0, 0]); 
     tm = mat4.rotateX(tm, (Math.random() - 0.5) * rotation);
-    // tm = mat4.rotateY(tm, 2 * Math.PI * (Math.random() - 0.5) * rotation);
-    // return mat4.rotateZ(tm, 2 * Math.PI * (Math.random() - 0.5) * rotation);
-    return mat4.transpose(tm);
-    // return tm;
+    tm = mat4.rotateY(tm, (Math.random() - 0.5) * rotation);
+    tm = mat4.rotateZ(tm, (Math.random() - 0.5) * rotation);
+    return tm; // ⚠️ pas besoin de transpose ici
 }
+
+// function randomMotion(translation, rotation) { 
+//     let tm = mat4.identity();
+//     tm = mat4.translate(tm, Array.from({ length: 3 }, _ => (Math.random() - 0.5) * translation));
+//     // let tm = mat4.translation();
+//     tm = mat4.rotateX(tm, (Math.random() - 0.5) * rotation);
+//     // tm = mat4.rotateY(tm, 2 * Math.PI * (Math.random() - 0.5) * rotation);
+//     // return mat4.rotateZ(tm, 2 * Math.PI * (Math.random() - 0.5) * rotation);
+//     return mat4.transpose(tm);
+//     // return tm;
+// }
 
 function createVertex(theta, phi, r) {
     return [

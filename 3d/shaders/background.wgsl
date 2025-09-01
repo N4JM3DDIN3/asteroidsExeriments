@@ -19,6 +19,7 @@ fn vsMain(
     var out: VertexOutput;
     out.position = background.mvpMatrix * vec4<f32>(position, 1.0);
     out.uv = uv;
+    out.position.z = out.position.w;
     return out;
 }
 
