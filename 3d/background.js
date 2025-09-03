@@ -2,22 +2,27 @@ import { cubeVertices } from "./cube.js";
 
 export default class Background {
     static async fromPaths(gpu, { image, shader, projectionMatrixBuffer }, geometry) {
-        // !!problem in the creation of the texture !!
         const texture = await gpu.createCubeTexture([image, image, image, image, image, image]);
+        console.log("shader", shader);
         const module = await gpu.createShader(shader);
-        return new Background(gpu, { texture, module, projectionMatrixBuffer }, geometry)
+        console.log("module", module);
+        const pipeline = await gpu.createRenderPipelineBackground(module);
+
+        
+        return new Background(gpu, { texture, module, projectionMatrixBuffer, pipeline }, geometry)
         
     }
 
-    constructor(gpu, { texture, module, projectionMatrixBuffer }) {
+    constructor(gpu, { texture, module, projectionMatrixBuffer, pipeline }) {
         this.gpu = gpu;
         this.texture = texture;
         this.projectionMatrixBuffer = projectionMatrixBuffer;
         this.sampler = gpu.createSampler();
-        this.pipeline = gpu.createRenderPipeline(module, "vsMain", module, "fsMain");
+        this.pipeline = pipeline;
         this.vertexBuffer = gpu.createVertexBuffer(cubeVertices.byteLength)
         this.gpu.device.queue.writeBuffer(this.vertexBuffer, 0, cubeVertices);
-
+        console.log("this.pipeline", this.pipeline);
+        
         this.bindGroup = gpu.createBindGroup({
             layout: this.pipeline.getBindGroupLayout(0),
             entries: [
@@ -30,6 +35,10 @@ export default class Background {
 
     get queue() {
         return this.gpu.device.queue;
+    }
+
+    writeBuffer(viewProjMatrix) {
+        this.queue.writeBuffer(this.projectionMatrixBuffer, 0, viewProjMatrix.buffer, viewProjMatrix.byteOffset, 64);
     }
 
     draw(pass) {        

@@ -15,6 +15,15 @@ export default class Controls {
         window.addEventListener('keyup', ev => this.keys[ev.key] = false);
     }
 
+    updateCamera(camera, ship, delta = 0.5) {
+        if (this.keys.w) ship.moveLocal(delta, 0, 0);
+        if (this.keys.s) ship.moveLocal(-delta, 0, 0);
+        if (this.keys.a) ship.moveLocal(0, -delta, 0);
+        if (this.keys.d) ship.moveLocal(0, delta, 0);
+        if (this.keys.ArrowLeft) camera.turnLeft(0.05);
+        if (this.keys.ArrowRight) camera.turnRight(0.05);
+    }
+
     get x() {
         return this.keys.d - this.keys.a;
     }

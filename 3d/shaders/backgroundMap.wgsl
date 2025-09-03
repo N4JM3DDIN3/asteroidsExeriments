@@ -13,7 +13,8 @@ struct Background {
 
 @vertex
 fn vsMain(
-        @location(0) pos: vec3<f32>
+        @location(0) pos: vec3<f32>,
+        @location(1) uv : vec2<f32>
     ) -> VertexOutput {
     var out: VertexOutput;
     // Transform cube vertices by MVP (includes translation to ship.position)

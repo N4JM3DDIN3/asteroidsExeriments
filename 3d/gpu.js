@@ -62,7 +62,10 @@ export default class WebGPU {
     }
 
     async createShader(path, options) {
+        console.log("Loading shader from", path);
         const response = await fetch(path);
+        console.log("response", response);
+        
         let code = await response.text();
         if(code.search(/@workgroup_size\(1\)/) != -1) {
             code = code.replace("@workgroup_size(1)", `@workgroup_size(${options.wgSize})`)
@@ -78,9 +81,11 @@ export default class WebGPU {
                 entryPoint: vEntry,
                 buffers: [
                     {
-                        arrayStride: 12,
+                        arrayStride: 32,
                         attributes: [
-                            { shaderLocation: 0, offset: 0, format: "float32x3" }
+                            { shaderLocation: 0, format: "float32x3", offset: 0 },   
+                            { shaderLocation: 1, format: "float32x2", offset: 12 },  
+                            { shaderLocation: 2, format: "float32x3", offset: 20 },                              
                         ]
                     }
                 ]
@@ -94,8 +99,7 @@ export default class WebGPU {
         });
     }
 
-    async createRenderPipelineBackground(shader) {
-        const module = await this.createShader(shader);
+    async createRenderPipelineBackground(module) {        
         return this.device.createRenderPipeline({
             layout: "auto",
             vertex: {
@@ -211,7 +215,10 @@ export default class WebGPU {
         } else {
             const texture = await this.createTexture(image);
             const sampler = this.createSampler();
-            const pipeline = await this.createRenderPipelineBackground(shader);
+            const module = await this.createShader(shader);
+            const pipeline = await this.createRenderPipelineBackground(module);
+            console.log("pipeline", pipeline);
+            
             const bindGroup = this.device.createBindGroup({
                 layout: pipeline.getBindGroupLayout(0),
                 entries: [
@@ -221,13 +228,13 @@ export default class WebGPU {
                 ]
             });
             const buffers = this.createIndexVertexBuffer(createSphere());
-            return new Background(pipeline, bindGroup, buffers);
+            return new SphericalBackground(pipeline, bindGroup, buffers);
         }
     }
 
 }
 
-class Background {
+class SphericalBackground {
     constructor(pipeline, bindGroup, buffers) {
         this.pipeline = pipeline;
         this.bindGroup = bindGroup;

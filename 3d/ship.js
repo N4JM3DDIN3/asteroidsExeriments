@@ -17,7 +17,7 @@ export default class Ship {
         return mat4.translate(this.orientation, this.position);
     }
 
-get xAxis() {
+    get xAxis() {
         return mat4.getAxis(this.orientation, 0);
     }
     get yAxis() {
@@ -27,12 +27,22 @@ get xAxis() {
         return mat4.getAxis(this.orientation, 2);
     }
 
+    moveLocal(forward, right, up) {
+        const local = vec3.create(right, up, forward);
+        const orientationOnly = mat4.clone(this.orientation);
+        orientationOnly[12] = orientationOnly[13] = orientationOnly[14] = 0; 
+        const world = vec3.transformMat4(local, orientationOnly);
+        this.position[0] += world[0];
+        this.position[1] += world[1];
+        this.position[2] += world[2];
+    }
+
     update(elapsed) {
         const pitchRot = mat4.axisRotation(this.xAxis, this.pitchInput * this.turnPower * elapsed);
         const yawRot  = mat4.axisRotation(this.yAxis, this.yawInput   * this.turnPower * elapsed);
         const rollRot = mat4.axisRotation(this.zAxis, this.rollInput  * this.turnPower * elapsed);
 
-const combinedRot = mat4.multiply(
+    const combinedRot = mat4.multiply(
             mat4.multiply(
                 yawRot, 
                 pitchRot
