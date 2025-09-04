@@ -96,10 +96,13 @@ export default class AsteroidsGame {
     update(elapsed) {
         this.updateFrameBuffer(elapsed);
 
-        if (this.controls.fov) {
-            const minFov = 30 * Math.PI / 180;
+        if (this.controls.fovZoomOut) {
             const maxFov = 120 * Math.PI / 180;
-            this.camera.fov = Math.min(Math.max(this.camera.fov + 1 * elapsed, minFov), maxFov);
+            this.camera.fov = Math.min(this.camera.fov + 1 * elapsed, maxFov);
+        }
+        if (this.controls.fovZoomIn) {
+            const minFov = 30 * Math.PI / 180;
+            this.camera.fov = Math.max(this.camera.fov - 1 * elapsed, minFov);
         }
 
         this.ship.pitchInput  = this.controls.y;      
