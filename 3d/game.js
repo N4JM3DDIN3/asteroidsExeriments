@@ -58,7 +58,8 @@ export default class AsteroidsGame {
             });
         }
 
-        this.asteroidTexture = await this.gpu.createTexture('3d/images/u70ulib8.jpg');
+        // You can change the texture here, the website is https://ambientcg.com/list?category=Rock&sort=popular
+        this.asteroidTexture = await this.gpu.createTexture('3d/images/asteroid.jpg');
 
 
         this.asteroids = await Asteroids.withModule(this.gpu, {
