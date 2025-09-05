@@ -38,9 +38,13 @@ export default class Ship {
     }
 
     update(elapsed) {
-        const pitchRot = mat4.axisRotation(this.xAxis, this.pitchInput * this.turnPower * elapsed);
-        const yawRot  = mat4.axisRotation(this.yAxis, this.yawInput   * this.turnPower * elapsed);
-        const rollRot = mat4.axisRotation(this.zAxis, this.rollInput  * this.turnPower * elapsed);
+        // const pitchRot = mat4.axisRotation(this.xAxis, this.pitchInput * this.turnPower * elapsed);
+        // const yawRot  = mat4.axisRotation(this.yAxis, this.yawInput   * this.turnPower * elapsed);
+        // const rollRot = mat4.axisRotation(this.zAxis, this.rollInput  * this.turnPower * elapsed);
+
+        const pitchRot = mat4.rotationX(this.pitchInput * this.turnPower * elapsed);
+        const yawRot   = mat4.rotationY(this.yawInput   * this.turnPower * elapsed);
+        const rollRot  = mat4.rotationZ(this.rollInput  * this.turnPower * elapsed);
 
     const combinedRot = mat4.multiply(
             mat4.multiply(
