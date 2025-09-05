@@ -22,13 +22,13 @@ export default class Controls {
     }
 
     get x() {
-        return this.keys.d - this.keys.a;
+        return this.keys.ArrowRight - this.keys.ArrowLeft
     }
     get y() {
         return this.keys.s - this.keys.w;
     }
     get z() {
-        return this.keys.ArrowRight - this.keys.ArrowLeft
+        return this.keys.d - this.keys.a;
     }
     
     get fovZoomOut() { 
