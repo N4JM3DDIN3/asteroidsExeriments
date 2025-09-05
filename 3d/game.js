@@ -4,24 +4,13 @@ import Camera from './camera.js';
 import Ship from './ship.js';
 import Controls from "./controls.js";
 
-function _createCanvas() {
-    const canvas = document.createElement('canvas');
-    document.body.append(canvas);
-    document.body.style.display = "grid";
-    document.body.style.margin = "0";
-    document.body.style.minHeight = "100dvh";
-    canvas.style.backgroundColor = "black";
-    canvas.height = document.body.clientHeight;
-    canvas.width = document.body.clientWidth;
-    return canvas;
-}
 
 export default class AsteroidsGame {
     constructor(gpu, backgroundType = "cubique") { 
         this.gpu = gpu;
         this.backgroundType = backgroundType;
 
-        this.canvas = _createCanvas();
+        this.canvas = this._createCanvas();
         this.ctx = this.gpu.createContext(this.canvas, 'opaque');
 
         this.camera = new Camera(this.canvas);
@@ -32,7 +21,17 @@ export default class AsteroidsGame {
         this.worldBuffer = gpu.createUniformBuffer(64);
 
         this.frameBuffer = gpu.createUniformBuffer(4);
+        this.resize();
+    }
 
+    _createCanvas() {
+        const canvas = document.createElement('canvas');
+        document.body.append(canvas);
+        document.body.style.display = "grid";
+        document.body.style.margin = "0";
+        document.body.style.minHeight = "100dvh";
+        canvas.style.backgroundColor = "black";
+        return canvas;
     }
 
     resize() {

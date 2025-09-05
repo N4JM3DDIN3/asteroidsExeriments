@@ -39,10 +39,13 @@ fn vsMain(  @builtin(vertex_index) vertexIndex: u32,
 fn fsMain(input: VertexOutput) -> @location(0) vec4<f32> {
     // return input.colour;//vec4(1, input.position.x, 0, 1);
     let color = textureSample(texture, my_sampler, input.texture);
+    // let color = vec2<f32>(1.0, 1.0);
 
     // Simple lumière directionnelle
     let lightDir = normalize(vec3<f32>(0.5, 0.7, 1.0));
-    let diffuse = max(dot(input.normal, lightDir), 0.2);
+    // let diffuse = max(dot(input.normal, lightDir), 0.4);
+
+    let diffuse = dot(input.normal, lightDir);
 
     return vec4(color.rgb * diffuse, color.a);}
 

@@ -96,7 +96,7 @@ export default class Asteroids {
         new Float32Array(this.locationBuffer.getMappedRange()).set(this.locations);
         this.locationBuffer.unmap();
         this.movements = Array.from({ length: nAsteroids }, _ => {
-            let tm = randomMotion(0.1, Math.PI * 0);
+            let tm = randomMotion(0, Math.PI * 0);
             return Array.from(tm);
         }).flat();        
         this.movementBuffer = gpu.createCopyBuffer(64 * nAsteroids, true);
